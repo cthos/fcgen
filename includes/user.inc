@@ -14,5 +14,14 @@ class FCGenUserMigration extends FCGenBaseMigration {
     );
 
     $this->destination = new MigrateDestinationUser();
+
+    $this->addFieldMapping('name', 'userName');
+    // Use safeEmail to ensure it doesn't go anywhere.
+    $this->addFieldMapping('email', 'safeEmail');
+    $this->addFieldMapping('pass', 'password');
+
+    $this->addFieldMapping('status')->callbacks(function ($value) {
+      return $this->faker->numberBetween(0,1);
+    });
   }
 }

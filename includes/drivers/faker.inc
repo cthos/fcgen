@@ -16,7 +16,7 @@ class FCGenDriverFaker extends FCGenDriver {
 
   public function getKeySchema() {
     return array(
-      'id' => array(
+      'randomNumber' => array(
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,

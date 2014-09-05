@@ -29,5 +29,9 @@ class FCGenNodeMigration extends FCGenBaseMigration {
       return $this->faker->sentence(10);
     });
     $this->addFieldMapping('body', 'text');
+
+    $this->addFieldMapping('uid')
+         ->sourceMigration($this->arguments['user_migration'])
+         ->callbacks(array($this, 'selectRandomUser'));
   }
 }
