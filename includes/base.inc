@@ -6,6 +6,8 @@
 use Faker;
 
 class FCGenBaseMigration extends Migration {
+  protected $driver;
+
   public function __construct($arguments) {
     // Generation defaults
     $defaults = array(
@@ -15,9 +17,7 @@ class FCGenBaseMigration extends Migration {
 
     $arguments = array_merge($defaults, $arguments);
 
-    $driver = FCGenDriver::factory($arguments['driver']);
-    $this->source = $driver->getSource($arguments['number_to_generate']);
-
-    //$this->map = new MigrateSqlMap();
+    $this->driver = FCGenDriver::factory($arguments['driver']);
+    $this->source = $this->driver->getSource($arguments['number_to_generate']);
   }
 }

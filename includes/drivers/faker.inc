@@ -14,6 +14,16 @@ class FCGenDriverFaker extends FCGenDriver {
     return static::$instance;
   }
 
+  public function getKeySchema() {
+    return array(
+      'id' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+    );
+  }
+
   public function init($arguments = null) {
     // Sensible Defaults:
     $faker_defaults = array(
