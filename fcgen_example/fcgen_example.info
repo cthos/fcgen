@@ -1,9 +1,24 @@
-name = FCGen example generator
+name = FCGen Example Generator
 description = Example content generations
 core = 7.x
-package = Migrate
+package = Migration
 
 dependencies[] = fcgen
 dependencies[] = forum
 ## Might need this if I want something more complex than forums
-#dependencies[] = features
+dependencies[] = features
+dependencies[] = image
+dependencies[] = list
+dependencies[] = number
+dependencies[] = options
+dependencies[] = text
+features[features_api][] = api:2
+features[field_base][] = body
+features[field_base][] = field_food_type
+features[field_base][] = field_price
+features[field_base][] = field_product_image
+features[field_instance][] = node-fcgen_food-body
+features[field_instance][] = node-fcgen_food-field_food_type
+features[field_instance][] = node-fcgen_food-field_price
+features[field_instance][] = node-fcgen_food-field_product_image
+features[node][] = fcgen_food

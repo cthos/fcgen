@@ -1,1 +1,4 @@
 .idea
+vendor
+## Only because I want composer manager to handle this.
+composer.lock

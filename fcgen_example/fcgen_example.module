@@ -4,4 +4,6 @@
  * User: alex.ward
  * Date: 9/7/14
  * Time: 9:38 AM
- */ 
+ */
+
+include_once 'fcgen_example.features.inc';
