@@ -14,6 +14,13 @@ class FCGenDriverFaker extends FCGenDriver {
     return static::$instance;
   }
 
+  /**
+   * Gets the key schema:
+   *
+   * @todo This might need to actually be a serial rng or unique.
+   *
+   * @return array
+   */
   public function getKeySchema() {
     return array(
       'randomNumber' => array(
@@ -37,6 +44,7 @@ class FCGenDriverFaker extends FCGenDriver {
 
     $arguments = array_merge($faker_defaults, $arguments);
 
+    // TODO: This might need to be per content type, but also exportable.
     if (!$this->seed = variable_get('fcgen_faker_seed', $arguments['seed'])) {
       $this->seed = $this->generateSeed();
     }
@@ -49,13 +57,31 @@ class FCGenDriverFaker extends FCGenDriver {
     return new MigrateSourceFCGen($number_to_generate, array('faker' => $this->faker));
   }
 
-  public function generate($type, array $arguments = null) {
+  /**
+   * Shim method around calling faker, to abstract out the driver system.
+   *
+   * That way you can call $driver->generate and the outer class doesn't need
+   * to know about faker necessarily (though granted, I'm using faker's naming
+   * conventions so other drivers would need to account for that).
+   *
+   * Accepts a $type and $arguments. Uses func_get_args().
+   *
+   * @return mixed
+   */
+  public function generate() {
+    $arguments = func_get_args();
+    $type = array_shift($arguments);
+
     if (empty($arguments)) {
       $arguments = array();
     }
 
     // Just pass the call right along to Faker:
-    $this->faker->{$type};
+    if (!empty($arguments)) {
+      return call_user_func_array(array($this->faker, $type), $arguments);
+    }
+
+    return $this->faker->{$type};
   }
 
   /**

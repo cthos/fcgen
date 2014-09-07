@@ -1,4 +1,3 @@
-## I'm not sold on this name...
 name = Fake Content Generator
 description = Provides a way to generate realistic test content.
 core = 7.x

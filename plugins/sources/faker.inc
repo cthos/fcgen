@@ -14,6 +14,10 @@ class MigrateSourceFaker extends MigrateSource {
       $this->faker = $options['faker'];
     } else {
       $this->faker = Faker\Factory::create();
+
+      if (isset($options['seed'])) {
+        $this->faker->seed($options['seed']);
+      }
     }
   }
 
@@ -60,9 +64,7 @@ class MigrateSourceFaker extends MigrateSource {
   /**
    * Implementation of MigrateSource::getNextRow().
    *
-   * Does nothing because Faker doesn't need to be pushed forward.
-   *
-   * TODO: Return values correlating to the Possible Faker Options
+   * Returns a copy of faker, because sorcery.
    *
    * @return object
    */

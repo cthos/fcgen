@@ -21,7 +21,7 @@ class FCGenUserMigration extends FCGenBaseMigration {
     $this->addFieldMapping('pass', 'password');
 
     $this->addFieldMapping('status')->callbacks(function ($value) {
-      return $this->faker->numberBetween(0,1);
+      return $this->driver->generate('numberBetween', 0, 1);
     });
   }
 }

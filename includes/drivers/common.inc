@@ -3,7 +3,7 @@
 abstract class FCGenDriver {
   abstract public function init($arguments = null);
 
-  abstract public function generate($type, array $arguments = null);
+  abstract public function generate();
 
   abstract public function getKeySchema();
 

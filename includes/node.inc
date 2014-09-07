@@ -33,5 +33,7 @@ class FCGenNodeMigration extends FCGenBaseMigration {
     $this->addFieldMapping('uid')
          ->sourceMigration($this->arguments['user_migration'])
          ->callbacks(array($this, 'selectRandomUser'));
+
+    $this->addFieldMapping('created', 'timestamp');
   }
 }
