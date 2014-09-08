@@ -5,3 +5,12 @@ package = Migrate
 
 dependencies[] = migrate
 dependencies[] = composer_manager
+
+files[] = includes/base.inc
+files[] = includes/comment.inc
+files[] = includes/node.inc
+files[] = includes/taxonomy.inc
+files[] = includes/user.inc
+files[] = includes/drivers/common.inc
+files[] = includes/drivers/faker.inc
+files[] = plugins/sources/faker.inc

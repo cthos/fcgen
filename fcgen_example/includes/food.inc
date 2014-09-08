@@ -1,13 +1,14 @@
 <?php
 
 
-class FCGenFoodMigration extends FCGenNodeMigration {
+class FCGenExampleFoodMigration extends FCGenNodeMigration {
   public function __construct($arguments) {
     parent::__construct($arguments);
 
+    $driver = $this->driver;
 
-    $this->addFieldMapping('field_food_type')->callbacks(function () {
-      $this->driver->generate('numberBetween', 0, 10);
+    $this->addFieldMapping('field_food_type', 'llama')->callbacks(function ($value) use ($driver) {
+      return $driver->generate('numberBetween', 0, 10);
     });
   }
 }

@@ -1,7 +1,5 @@
 <?php
 
-use Faker;
-
 class FCGenDriverFaker extends FCGenDriver {
   protected $faker;
   protected static $instance;
@@ -22,19 +20,13 @@ class FCGenDriverFaker extends FCGenDriver {
    * @return array
    */
   public function getKeySchema() {
-    return array(
-      'randomNumber' => array(
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-      ),
-    );
+    return MigrateSourceFaker::getKeySchema();
   }
 
   public function init($arguments = null) {
     // Sensible Defaults:
     $faker_defaults = array(
-      'language' => 'en',
+      'language' => 'en_US',
       'seed'     => NULL,
     );
 
@@ -54,7 +46,7 @@ class FCGenDriverFaker extends FCGenDriver {
   }
 
   public function getSource($number_to_generate) {
-    return new MigrateSourceFCGen($number_to_generate, array('faker' => $this->faker));
+    return new MigrateSourceFaker($number_to_generate, array('faker' => $this->faker));
   }
 
   /**
@@ -78,6 +70,11 @@ class FCGenDriverFaker extends FCGenDriver {
 
     // Just pass the call right along to Faker:
     if (!empty($arguments)) {
+      // TODO: This is kinda messy
+      if ($type == 'unique') {
+        return $this->faker->unique()->{$arguments[0]};
+      }
+
       return call_user_func_array(array($this->faker, $type), $arguments);
     }
 

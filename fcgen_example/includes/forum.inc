@@ -6,12 +6,32 @@ class FCGenExampleForumMigration extends FCGenNodeMigration {
     parent::__construct($arguments);
 
 
-    $this->addFieldMapping('taxonomy_forums')
-         ->sourceMigration($this->arguments['term_migration'])
+    $this->addFieldMapping('taxonomy_forums', 'randomNumber')
          ->callbacks(array($this, 'getRandomForum'));
+
+    $this->addFieldMapping('taxonomy_forums:source_type')->defaultValue('tid');
   }
 
   public function getRandomForum($value) {
-    
+    // Intentionally allowing random distribution.
+    $migration = Migration::getInstance($this->arguments['term_migration']);
+    $map_table = $migration->getMap()->getMapTable();
+
+    $random_source_id = db_select($map_table, 'm')
+      ->fields('m', array('destid1'))
+      ->orderRandom()
+      ->range(0,1)
+      ->execute()
+      ->fetchField();
+
+    return $random_source_id;
+  }
+}
+
+class FCGenExampleForumTermMigration extends FCGenTaxonomyMigration {
+  public function __construct($arguments) {
+    parent::__construct($arguments);
+
+    $this->addFieldMapping('name', 'sentence', FALSE);
   }
 }

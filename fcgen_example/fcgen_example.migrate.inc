@@ -18,6 +18,7 @@ function fcgen_example_migrate_api() {
       'FCGenUser' => array(
         'class_name' => 'FCGenUserMigration',
         'group_name' => 'fcgen_example',
+        'number_to_generate' => 2989,
       ),
       'FCGenPageMigration' => array(
         'user_migration' => 'FCGenUser',
@@ -33,16 +34,18 @@ function fcgen_example_migrate_api() {
       ),
       'FCGenForumTerm' => array(
         'user_migration' => 'FCGenUser',
-        'bundle'         => 'forum',
-        'class_name'     => 'FCGenTaxonomyMigration',
+        'bundle'         => 'forums',
+        'class_name'     => 'FCGenExampleForumTermMigration',
         'group_name'     => 'fcgen_example',
+        'hierarchical'   => TRUE,
       ),
       'FCGenForum' => array(
         'user_migration' => 'FCGenUser',
         'bundle'         => 'forum',
         'class_name'     => 'FCGenExampleForumMigration',
         'group_name'     => 'fcgen_example',
-        'term_migration' => 'FCGenForumTerm'
+        'term_migration' => 'FCGenForumTerm',
+        'number_to_generate' => 129000,
       )
     ),
   );

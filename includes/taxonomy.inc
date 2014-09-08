@@ -25,7 +25,7 @@ class FCGenTaxonomyMigration extends FCGenBaseMigration {
     $this->addFieldMapping('description', 'text');
 
     if (!empty($this->arguments['hierarchical'])) {
-      $this->addFieldMapping('parent')->callbacks(array($this, 'getRandomParent'));
+      $this->addFieldMapping('parent', 'parent')->callbacks(array($this, 'getRandomParent'));
     }
   }
 }

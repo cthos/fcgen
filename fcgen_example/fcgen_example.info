@@ -22,3 +22,6 @@ features[field_instance][] = node-fcgen_food-field_food_type
 features[field_instance][] = node-fcgen_food-field_price
 features[field_instance][] = node-fcgen_food-field_product_image
 features[node][] = fcgen_food
+
+files[] = includes/food.inc
+files[] = includes/forum.inc

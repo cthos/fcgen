@@ -3,8 +3,6 @@
  * @file Holds common classes for the FCGen migration.
  */
 
-use Faker;
-
 class FCGenBaseMigration extends Migration {
   protected $driver;
 
@@ -24,13 +22,17 @@ class FCGenBaseMigration extends Migration {
       'max_random_user_associations' => 40,
       'max_random_parent_associations' => 100,
       'user_migration' => 'Users',
+      'driver_language' => 'en_US',
     );
 
     $arguments = array_merge($defaults, $arguments);
 
     parent::__construct($arguments);
 
-    $this->driver = FCGenDriver::factory($arguments['driver']);
+    $this->driver = FCGenDriver::factory($this->arguments['driver']);
+    $this->driver->init(array(
+      'language' => $this->arguments['driver_language'],
+    ));
     $this->source = $this->driver->getSource($arguments['number_to_generate']);
   }
 
@@ -42,14 +44,15 @@ class FCGenBaseMigration extends Migration {
   public function selectRandomUser($value) {
     if (!isset($this->user_dependency_number) || $this->user_dependency_counter >= $this->user_dependency_number) {
       $this->user_dependency_counter = 0;
-      $this->user_dependency_number = $this->driver->randomBetween(1, $this->arguments['max_random_user_associations']);
+      $this->user_dependency_number = $this->driver->generate('numberBetween', 1, $this->arguments['max_random_user_associations']);
 
       $user_migration = Migration::getInstance($this->arguments['user_migration']);
       $map_table = $user_migration->getMap()->getMapTable();
 
       $this->random_user_id = db_select($map_table, 'm')
-        ->fields('m', array('sourceid1'))
+        ->fields('m', array('destid1'))
         ->orderRandom()
+        ->range(0,1)
         ->execute()
         ->fetchField();
     }
@@ -93,24 +96,25 @@ class FCGenBaseMigration extends Migration {
   public function getRandomParent($value) {
     if (!isset($this->parent_dependency_counter) || $this->parent_dependency_counter >= $this->parent_dependency_number) {
       $this->parent_dependency_counter = 0;
-      $this->parent_dependency_number = $this->driver->randomBetween(0, $this->arguments['max_random_parent_associations']);
+      $this->parent_dependency_number = $this->driver->generate('numberBetween', 0, $this->arguments['max_random_parent_associations']);
 
-      if ($this->tid_dependency_number == 0) {
+      if ($this->parent_dependency_number == 0) {
         return NULL;
       }
 
       $term_migration = Migration::getInstance($this->machineName);
       $map_table = $term_migration->getMap()->getMapTable();
 
-      $this->random_tid = db_select($map_table, 'm')
+      $this->random_parent = db_select($map_table, 'm')
         ->fields('m', array('destid1'))
         ->orderRandom()
+        ->range(0,1)
         ->execute()
         ->fetchField();
     }
 
     $this->parent_dependency_counter++;
 
-    return $this->random_tid;
+    return $this->random_parent;
   }
 }
