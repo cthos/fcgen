@@ -45,7 +45,7 @@ function fcgen_example_migrate_api() {
         'class_name'     => 'FCGenExampleForumMigration',
         'group_name'     => 'fcgen_example',
         'term_migration' => 'FCGenForumTerm',
-        'number_to_generate' => 129000,
+        'number_to_generate' => 12900,
       )
     ),
   );

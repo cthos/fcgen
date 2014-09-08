@@ -9,6 +9,8 @@ class FCGenExampleForumMigration extends FCGenNodeMigration {
     $this->addFieldMapping('taxonomy_forums', 'randomNumber')
          ->callbacks(array($this, 'getRandomForum'));
 
+    $this->addFieldMapping('title', 'catchPhrase', FALSE);
+
     $this->addFieldMapping('taxonomy_forums:source_type')->defaultValue('tid');
   }
 
@@ -32,6 +34,6 @@ class FCGenExampleForumTermMigration extends FCGenTaxonomyMigration {
   public function __construct($arguments) {
     parent::__construct($arguments);
 
-    $this->addFieldMapping('name', 'sentence', FALSE);
+    $this->addFieldMapping('name', 'bs', FALSE);
   }
 }
