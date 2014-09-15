@@ -3,3 +3,10 @@
 /**
  * @file Main module file required by Drupal.
  */
+
+/**
+ * Implements hook_query_TAG_alter.
+ */
+function fcgen_query_efq_random_alter($query) {
+  $query->orderRandom();
+}

@@ -24,15 +24,15 @@ class FCGenCommentMigration extends FCGenBaseMigration {
       MigrateDestinationComment::getKeySchema()
     );
 
-    $this->addFieldMapping('nid')
+    $this->addFieldMapping('nid', 'nid')
          ->sourceMigration($this->arguments['source_migration'])
          ->callbacks(array($this, 'selectRandomFromSource'));
 
-    $this->addFieldMapping('uid')
-         ->sourceMigration($this->arguments['user_migration'])
+    $this->addFieldMapping('uid', 'uid')
          ->callbacks(array($this, 'selectRandomUser'));
 
-    $this->addFieldMapping('pid')
+    // TODO: This is a problem, because it needs to be within the thread.
+    $this->addFieldMapping('pid', 'pid')
          ->callbacks(array($this, 'getRandomParent'));
 
     $this->addFieldMapping('comment_body', 'text');

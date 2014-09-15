@@ -25,6 +25,7 @@ function fcgen_example_migrate_api() {
         'bundle'         => 'page',
         'class_name'     => 'FCGenNodeMigration',
         'group_name'     => 'fcgen_example',
+        'number_to_generate' => 20834,
       ),
       'FCGenFoodMigration' => array(
         'user_migration' => 'FCGenUser',
