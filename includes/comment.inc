@@ -16,6 +16,8 @@ class FCGenCommentMigration extends FCGenBaseMigration {
        which these comments will be attached.');
     }
 
+    $this->dependencies[] = $this->arguments['source_migration'];
+
     $this->destination = new MigrateDestinationComment($this->arguments['bundle']);
 
     $this->map = new MigrateSQLMap(
@@ -24,18 +26,46 @@ class FCGenCommentMigration extends FCGenBaseMigration {
       MigrateDestinationComment::getKeySchema()
     );
 
-    $this->addFieldMapping('nid')
-         ->sourceMigration($this->arguments['source_migration'])
-         ->callbacks(array($this, 'selectRandomFromSource'));
+    $this->addFieldMapping('nid', 'nid')
+         ->sourceMigration($this->arguments['source_migration']);
 
-    $this->addFieldMapping('uid')
-         ->sourceMigration($this->arguments['user_migration'])
+    $this->addFieldMapping('uid', 'uid')
          ->callbacks(array($this, 'selectRandomUser'));
 
-    $this->addFieldMapping('pid')
-         ->callbacks(array($this, 'getRandomParent'));
+    // TODO: This is a problem, because it needs to be within the thread.
+    $this->addFieldMapping('pid', 'pid');
 
     $this->addFieldMapping('comment_body', 'text');
     $this->addFieldMapping('created', 'timestamp');
+  }
+
+  public function prepareRow($row) {
+    if (parent::prepareRow($row) === FALSE) {
+      return FALSE;
+    }
+
+    $row->pid = $this->getRandomParent(0);
+
+    if ($row->pid) {
+      $row->nid = $this->getNodeFromComment($row->pid);
+    } else {
+      // This has to be done here, since source mappings are applied before callbacks.
+      $row->nid = $this->selectRandomFromSource(0);
+    }
+  }
+
+  protected function getNodeFromComment($cid) {
+    $nid = db_select('comment', 'c')
+             ->fields('c', array('nid'))
+             ->condition('c.cid', $cid)
+             ->execute()
+             ->fetchField();
+
+    $migration = Migration::getInstance($this->arguments['source_migration']);
+    $map = $migration->getMap();
+
+    $sourceid = $map->lookupSourceID(array($nid));
+
+    return $sourceid['sourceid1'];
   }
 }

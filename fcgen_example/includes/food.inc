@@ -7,7 +7,7 @@ class FCGenExampleFoodMigration extends FCGenNodeMigration {
 
     $driver = $this->driver;
 
-    $this->addFieldMapping('field_food_type', 'llama')->callbacks(function ($value) use ($driver) {
+    $this->addFieldMapping('field_food_type', 'fakefield')->callbacks(function ($value) use ($driver) {
       return $driver->generate('numberBetween', 0, 10);
     });
   }

@@ -5,9 +5,12 @@ class FCGenExampleForumMigration extends FCGenNodeMigration {
   public function __construct($arguments) {
     parent::__construct($arguments);
 
+    $this_ref =& $this;
 
     $this->addFieldMapping('taxonomy_forums', 'randomNumber')
-         ->callbacks(array($this, 'getRandomForum'));
+         ->callbacks(function($value) use (&$this_ref) {
+          $this_ref->last_forum_nid = $this_ref->getRandomForum($value);
+        });
 
     $this->addFieldMapping('title', 'catchPhrase', FALSE);
 
@@ -35,5 +38,11 @@ class FCGenExampleForumTermMigration extends FCGenTaxonomyMigration {
     parent::__construct($arguments);
 
     $this->addFieldMapping('name', 'bs', FALSE);
+  }
+}
+
+class FCGenExampleForumCommentMigration extends FCGenCommentMigration {
+  public function __construct($arguments) {
+    parent::__construct($arguments);
   }
 }

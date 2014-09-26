@@ -25,6 +25,7 @@ function fcgen_example_migrate_api() {
         'bundle'         => 'page',
         'class_name'     => 'FCGenNodeMigration',
         'group_name'     => 'fcgen_example',
+        'number_to_generate' => 20834,
       ),
       'FCGenFoodMigration' => array(
         'user_migration' => 'FCGenUser',
@@ -46,7 +47,15 @@ function fcgen_example_migrate_api() {
         'group_name'     => 'fcgen_example',
         'term_migration' => 'FCGenForumTerm',
         'number_to_generate' => 12900,
-      )
+      ),
+      'FCGenForumPost' => array(
+        'user_migration' => 'FCGenUser',
+        'bundle'         => 'comment_node_forum',
+        'class_name'     => 'FCGenExampleForumCommentMigration',
+        'group_name'     => 'fcgen_example',
+        'source_migration' => 'FCGenForum',
+        'number_to_generate' => 4000,
+      ),
     ),
   );
   return $api;

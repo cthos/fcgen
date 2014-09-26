@@ -21,6 +21,7 @@ class FCGenBaseMigration extends Migration {
       'driver' => 'faker',
       'max_random_user_associations' => 40,
       'max_random_parent_associations' => 100,
+      'no_parent_chance' => 75,
       'user_migration' => 'Users',
       'driver_language' => 'en_US',
     );
@@ -69,6 +70,10 @@ class FCGenBaseMigration extends Migration {
    * random stacking.
    */
   public function selectRandomFromSource($value) {
+    if (!empty($value)) {
+      return $value;
+    }
+
     $migration = Migration::getInstance($this->arguments['source_migration']);
     $map_table = $migration->getMap()->getMapTable();
 
@@ -94,6 +99,18 @@ class FCGenBaseMigration extends Migration {
    * than once?
    */
   public function getRandomParent($value) {
+    if (!$this->arguments['max_random_parent_associations']) {
+      return NULL;
+    }
+
+    if ($this->arguments['no_parent_chance']) {
+      $parent_needed = $this->driver->generate('numberBetween', 1, 100);
+
+      if ($parent_needed <= $this->arguments['no_parent_chance']) {
+        return NULL;
+      }
+    }
+
     if (!isset($this->parent_dependency_counter) || $this->parent_dependency_counter >= $this->parent_dependency_number) {
       $this->parent_dependency_counter = 0;
       $this->parent_dependency_number = $this->driver->generate('numberBetween', 0, $this->arguments['max_random_parent_associations']);
@@ -116,5 +133,32 @@ class FCGenBaseMigration extends Migration {
     $this->parent_dependency_counter++;
 
     return $this->random_parent;
+  }
+
+  /**
+   * Finds a random comment in the node to attach to a parent.
+   *
+   * @param int $attached_entity_id
+   *   The entity to which we're tacking on this comment.
+   * @param float $no_parent_chance
+   *   The probability that a given comment will have no parent.
+   *
+   * @return int|null
+   */
+  public function getRandomCommentParent($attached_entity_id, $no_parent_chance = 0.5) {
+    $query = new EntityFieldQuery();
+
+    $query->entityCondition('entity_type', 'comment')
+          ->entityCondition('nid', $attached_entity_id)
+          ->addTag('efq_random')
+          ->range(0, 1);
+
+    $result = $query->execute();
+
+    if (empty($result['comment'])) {
+      return NULL;
+    }
+
+    return current(array_keys($result['comment']));
   }
 }
