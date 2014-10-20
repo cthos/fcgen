@@ -10,9 +10,9 @@ class FCGenBaseMigration extends Migration {
   protected $parent_dependency_number;
   protected $random_parent;
 
-  protected $user_dependency_counter;
-  protected $user_dependency_number;
   protected $random_user_id;
+
+  protected $_selected_users = array();
 
   public function __construct($arguments) {
     // Generation defaults
@@ -24,6 +24,7 @@ class FCGenBaseMigration extends Migration {
       'no_parent_chance' => 75,
       'user_migration' => 'Users',
       'driver_language' => 'en_US',
+      'duplicate_user_chance' => 20,
     );
 
     $arguments = array_merge($defaults, $arguments);
@@ -43,22 +44,50 @@ class FCGenBaseMigration extends Migration {
    * @todo This only works with MigrateSQLMap at the moment.
    */
   public function selectRandomUser($value) {
-    if (!isset($this->user_dependency_number) || $this->user_dependency_counter >= $this->user_dependency_number) {
-      $this->user_dependency_counter = 0;
-      $this->user_dependency_number = $this->driver->generate('numberBetween', 1, $this->arguments['max_random_user_associations']);
+    if ($this->arguments['duplicate_user_chance']) {
+      if ($this->driver->generate('numberBetween', 1, 100) <= $this->arguments['duplicate_user_chance']) {
+        while (TRUE) {
+          $user = array_rand($this->_selected_users);
 
-      $user_migration = Migration::getInstance($this->arguments['user_migration']);
-      $map_table = $user_migration->getMap()->getMapTable();
-
-      $this->random_user_id = db_select($map_table, 'm')
-        ->fields('m', array('destid1'))
-        ->orderRandom()
-        ->range(0,1)
-        ->execute()
-        ->fetchField();
+          if ($this->_selected_users[$user] > 0) {
+            $this->random_user_id = $user;
+            return $this->random_user_id;
+          }
+        }
+      }
     }
 
-    $this->user_dependency_counter++;
+    while (TRUE) {
+      $this->_findRandomUser();
+
+      if (empty($this->_selected_users[$this->random_user_id])) {
+        $dep_number = $this->driver->generate('numberBetween', 1, $this->arguments['max_random_user_associations']);
+        $this->_selected_users[$this->random_user_id] = $dep_number;
+      }
+
+      if ($this->_selected_users[$this->random_user_id] > 0) {
+        break;
+      }
+    }
+
+    $this->_selected_users[$this->random_user_id] -= 1;
+
+    return $this->random_user_id;
+  }
+
+  /**
+   * Grabs a random user out of the map table's database.
+   */
+  protected function _findRandomUser() {
+    $user_migration = Migration::getInstance($this->arguments['user_migration']);
+    $map_table = $user_migration->getMap()->getMapTable();
+
+    $this->random_user_id = db_select($map_table, 'm')
+      ->fields('m', array('destid1'))
+      ->orderRandom()
+      ->range(0,1)
+      ->execute()
+      ->fetchField();
 
     return $this->random_user_id;
   }
