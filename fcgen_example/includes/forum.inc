@@ -9,7 +9,7 @@ class FCGenExampleForumMigration extends FCGenNodeMigration {
 
     $this->addFieldMapping('taxonomy_forums', 'randomNumber')
          ->callbacks(function($value) use (&$this_ref) {
-          $this_ref->last_forum_nid = $this_ref->getRandomForum($value);
+          return $this_ref->getRandomForum($value);
         });
 
     $this->addFieldMapping('title', 'catchPhrase', FALSE);
